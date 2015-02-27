@@ -114,10 +114,15 @@ class JS extends Minify
     public function minify($path = null)
     {
         $content = '';
-
+		$filesName = array();
+		
         // loop files
         foreach ($this->data as $source => $js) {
-            /*
+
+			// Add name
+			$filesName[] = $source;
+			
+			/*
              * Combine js: separating the scripts by a ;
              * I'm also adding a newline: it will be eaten when whitespace is
              * stripped, but we need to make sure we're not just appending
@@ -153,7 +158,10 @@ class JS extends Minify
          * with placeholder text. This will restore them.
          */
         $content = $this->restoreExtractedData($content);
-
+		
+		// Add the list of the original files path
+		$content = "/*\n" . implode("\n", $filesName) . "\n*/\n" . $content;
+		
         // save to path
         if ($path !== null) {
             $this->save($content, $path);
@@ -265,8 +273,9 @@ class JS extends Minify
         $content = preg_replace('/(^|[;\}\s])\K(' . implode('|', $before) . ')\s+/', '\\2 ', $content);
         $content = preg_replace('/\s+(' . implode('|', $after) . ')(?=([;\{\s]|$))/', ' \\1', $content);
 
-        // get rid of double semicolons
-        //$content = preg_replace('/;+/', ';', $content);
+		// get rid of double semicolons, except when followed by closing-),
+		// where semicolons can be used like: "for(v=1,_=b;;)"
+		$content = preg_replace('/;+(?!\))/', ';', $content);
 
         /*
          * We also don't really want to terminate statements followed by closing

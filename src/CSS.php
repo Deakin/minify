@@ -264,7 +264,11 @@ class CSS extends Minify
 
         // loop files
         foreach ($this->data as $source => $css) {
-            /*
+            
+			// Add name
+			$filesName[] = $source;
+			
+			/*
              * Let's first take out strings & comments, since we can't just remove
              * whitespace anywhere. If whitespace occurs inside a string, we should
              * leave it alone. E.g.:
@@ -298,6 +302,9 @@ class CSS extends Minify
             // combine css
             $content .= $css;
         }
+		
+		// Add the list of the original files path
+		$content = "/*\n" . implode("\n", $filesName) . "\n*/\n" . $content;
 
         // save to path
         if ($path !== null) {
