@@ -266,7 +266,8 @@ class CSS extends Minify
         foreach ($this->data as $source => $css) {
             
 			// Add name
-			$filesName[] = $source;
+			$arraySource = explode('/', $source);
+			$filesName[] = end($arraySource);
 			
 			/*
              * Let's first take out strings & comments, since we can't just remove

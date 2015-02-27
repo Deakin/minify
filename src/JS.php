@@ -113,14 +113,16 @@ class JS extends Minify
      */
     public function minify($path = null)
     {
-        $content = '';
+
+		$content = '';
 		$filesName = array();
 		
         // loop files
         foreach ($this->data as $source => $js) {
 
 			// Add name
-			$filesName[] = $source;
+			$arraySource = explode('/', $source);
+			$filesName[] = end($arraySource);
 			
 			/*
              * Combine js: separating the scripts by a ;
